@@ -3,11 +3,12 @@ package com.example.poc.mongo.entity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.mongodb.core.mapping.MongoId;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.util.List;
 
@@ -21,8 +22,9 @@ import java.util.List;
 @Document(collection = "person")
 public class Person {
 
-    @MongoId
-    @Field(value = "_id")
+
+    @Id
+    @Field(value = "_id", targetType = FieldType.OBJECT_ID)
     private String id;
 
     @Field(value = "name")

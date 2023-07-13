@@ -5,12 +5,14 @@ import com.example.poc.mongo.entity.Pet;
 import com.example.poc.mongo.repository.PersonRepository;
 import com.example.poc.mongo.repository.PetRepository;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -28,13 +30,15 @@ public class MongoDemoController {
 
     @PostMapping(value = "/pet")
     public ResponseEntity<Pet> saveAPet(@RequestBody Pet pet) {
-        return new ResponseEntity<>(petRepository.save(pet), HttpStatus.CREATED);
+        return new ResponseEntity<>(petRepository.insert(pet), HttpStatus.CREATED);
     }
 
     @PostMapping(value = "/person")
     public ResponseEntity<Person> saveAPerson(@RequestBody Person person) {
-        Iterable<Pet> allById = petRepository.findAllById(person.getPets().stream().map(Pet::getId).collect(Collectors.toList()));
-        person.setPets((List<Pet>) allById);
+        List<Pet> allByIdIn = petRepository.findAllByIdIn(person.getPets().stream().map(Pet::getId).collect(Collectors.toList()));
+
+        person.setPets(allByIdIn);
+
         return new ResponseEntity<>(personRepository.save(person), HttpStatus.CREATED);
     }
 
@@ -50,7 +54,8 @@ public class MongoDemoController {
 
     @GetMapping(value = "/pet/{id}")
     public ResponseEntity<Pet> getPet(@PathVariable(value = "id") final String id) {
-        return new ResponseEntity<>(petRepository.findById(id).orElse(new Pet().setName("Not Found")), HttpStatus.OK);
+        Pet byId = Optional.ofNullable(mongoTemplate.findById(new ObjectId(id), Pet.class)).orElse(new Pet().setName("Not Found"));
+        return new ResponseEntity<>(byId, HttpStatus.OK);
     }
 
     @PutMapping(value = "/pet/{id}")
@@ -67,6 +72,6 @@ public class MongoDemoController {
     @DeleteMapping(value = "/pet/{id}")
     public ResponseEntity<Void> deleteAPet(@PathVariable(value = "id") final String id) {
         petRepository.deleteById(id);
-        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }

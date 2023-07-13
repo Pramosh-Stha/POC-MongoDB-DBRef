@@ -6,7 +6,7 @@ import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.connection.AsynchronousSocketChannelStreamFactoryFactory;
-import com.mongodb.connection.netty.NettyStreamFactoryFactory;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -21,6 +21,7 @@ import java.util.Collections;
  * @author Pramosh Shrestha
  * @created 12/07/2023: 10:21
  */
+@Primary
 @Component
 public class MongoDBConfig extends AbstractMongoClientConfiguration {
 

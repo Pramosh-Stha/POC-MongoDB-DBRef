@@ -5,4 +5,7 @@ logging:
         data:
           mongodb:
             core:
-              MongoTemplate=DEBUG:
+              MongoTemplate: debug
+            repository:
+              query: debug
+
